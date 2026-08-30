@@ -2,6 +2,8 @@
 #include <fstream>
 
 #include "service/ProblemService.hpp"
+#include "service/SubmissionService.hpp"
+#include "utils/SubmissionStatus.hpp"
 
 crow::json::wvalue serializeProblem(const Problem& problem) {
     crow::json::wvalue json;
@@ -33,6 +35,13 @@ int main() {
 
     ProblemRepository repository("../data/problems.json");
     ProblemService service(repository);
+
+    SubmissionRepository submission_repository("../data/submissions.json");
+
+    SubmissionService submission_service(
+        submission_repository,
+        service
+    );
 
     CROW_ROUTE(app, "/")([] {
         std::ifstream file("../public/index.html");
@@ -78,6 +87,87 @@ int main() {
             return crow::response(serializeProblem(*problem));
         }
     );
+
+    CROW_ROUTE(app, "/submissions")
+    .methods(crow::HTTPMethod::POST)
+    ([&submission_service](const crow::request& request) {
+
+        try {
+            auto body = crow::json::load(request.body);
+
+            if (!body) {
+                return crow::response(400, "Invalid JSON");
+            }
+
+            if (!body.has("problem_id") ||
+                !body.has("source_code") ||
+                !body.has("language")) {
+                return crow::response(
+                    400,
+                    "Missing required fields"
+                );
+            }
+
+            int problem_id = body["problem_id"].i();
+
+            std::string source_code =
+                body["source_code"].s();
+
+            std::string language =
+                body["language"].s();
+
+            Submission submission =
+                submission_service.createSubmission(
+                    problem_id,
+                    source_code,
+                    language
+                );
+
+            crow::json::wvalue response;
+
+            response["submission_id"] = submission.id;
+            response["status"] = "QUEUED";
+
+            return crow::response(202, response);
+
+        } catch (const std::invalid_argument& error) {
+
+            return crow::response(
+                400,
+                error.what()
+            );
+
+        } catch (const std::exception& error) {
+
+            return crow::response(
+                500,
+                error.what()
+            );
+        }
+    });
+
+    CROW_ROUTE(app, "/submissions/<string>")
+    ([&submission_service](const std::string& id) {
+
+        auto submission =
+            submission_service.getSubmissionById(id);
+
+        if (!submission) {
+            return crow::response(
+                404,
+                "Submission not found"
+            );
+        }
+
+        crow::json::wvalue response;
+
+        response["submission_id"] = submission->id;
+        response["problem_id"] = submission->problem_id;
+        response["language"] = submission->language;
+        response["status"] = submissionStatusToString(submission->status);
+
+        return crow::response(response);
+    });
 
     app.port(8080).multithreaded().run();
 }
