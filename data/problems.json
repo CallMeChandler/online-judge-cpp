@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "title": "Two Sum",
+        "description": "Given an array of integers and a target, return the indices of the two numbers that add up to the target.",
+        "difficulty": "Easy",
+        "tags": [
+            "Array",
+            "Hash Table"
+        ],
+        "constraints": [
+            "2 <= nums.length <= 10000",
+            "-10^9 <= nums[i] <= 10^9"
+        ],
+        "sample_test_cases": [
+            {
+                "input": "nums = [2,7,11,15], target = 9",
+                "expected_output": "[0,1]"
+            },
+            {
+                "input": "nums = [3,2,4], target = 6",
+                "expected_output": "[1,2]"
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "title": "Valid Parentheses",
+        "description": "Given a string containing brackets, determine whether the input string is valid.",
+        "difficulty": "Easy",
+        "tags": [
+            "String",
+            "Stack"
+        ],
+        "constraints": [
+            "1 <= s.length <= 10000",
+            "s consists of parentheses only"
+        ],
+        "sample_test_cases": [
+            {
+                "input": "s = \"()\"",
+                "expected_output": "true"
+            },
+            {
+                "input": "s = \"([)]\"",
+                "expected_output": "false"
+            }
+        ]
+    }
+]
