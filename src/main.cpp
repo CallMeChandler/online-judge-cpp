@@ -1,4 +1,5 @@
 #include <crow.h>
+#include <fstream>
 
 #include "service/ProblemService.hpp"
 
@@ -32,6 +33,21 @@ int main() {
 
     ProblemRepository repository("../data/problems.json");
     ProblemService service(repository);
+
+    CROW_ROUTE(app, "/")([] {
+        std::ifstream file("../public/index.html");
+
+        if (!file.is_open()) {
+            return crow::response(500, "Failed to load index.html");
+        }
+
+        std::string html((std::istreambuf_iterator<char>(file)),
+                        std::istreambuf_iterator<char>());
+
+        crow::response res(html);
+        res.set_header("Content-Type", "text/html");
+        return res;
+    });
 
     CROW_ROUTE(app, "/health")([] {
         crow::json::wvalue response;
