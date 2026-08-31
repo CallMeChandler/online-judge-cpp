@@ -30,6 +30,14 @@ add_executable(online_judge
     ${SOURCES}
 )
 
+add_executable(blocking_queue_test
+    tests/BlockingQueueTest.cpp
+)
+
+target_include_directories(blocking_queue_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
 target_include_directories(online_judge PRIVATE
     include
 )
