@@ -38,6 +38,15 @@ target_include_directories(blocking_queue_test PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
+add_executable(worker_pool_test
+    tests/WorkerPoolTest.cpp
+    src/worker/WorkerPool.cpp
+)
+
+target_include_directories(worker_pool_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
 target_include_directories(online_judge PRIVATE
     include
 )

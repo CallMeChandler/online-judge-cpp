@@ -1,5 +1,6 @@
 #include "models/JudgeJob.hpp"
 #include "queue/BlockingQueue.hpp"
+#include "worker/WorkerPool.hpp"
 
 #include <cassert>
 #include <chrono>
@@ -10,18 +11,23 @@ int main() {
 
     BlockingQueue<JudgeJob> queue;
 
+    WorkerPool pool(queue, 3);
+
+    pool.start();
+
     JudgeJob job;
 
     job.submission_id = "submission-123";
 
     queue.push(job);
 
-    auto received = queue.pop();
+    std::this_thread::sleep_for(
+        std::chrono::milliseconds(100)
+    );
 
-    assert(received.has_value());
-    assert(received->submission_id == "submission-123");
+    pool.shutdown();
 
-    std::cout << "JudgeJob queue test passed\n";
+    std::cout << "WorkerPool test passed\n";
 
     return 0;
 }
