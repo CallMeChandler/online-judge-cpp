@@ -4,10 +4,12 @@
 
 WorkerPool::WorkerPool(
     BlockingQueue<JudgeJob>& queue,
-    std::size_t worker_count
+    std::size_t worker_count,
+    JobHandler handler
 )
     : queue(queue),
-      worker_count(worker_count) {
+      worker_count(worker_count),
+      handler(std::move(handler)) {
 
     if (worker_count == 0) {
         throw std::invalid_argument(
@@ -41,17 +43,14 @@ void WorkerPool::start() {
 }
 
 void WorkerPool::workerLoop() {
-
     while (true) {
-
         auto job = queue.pop();
 
         if (!job) {
             break;
         }
 
-        // Temporary behavior.
-        // Actual judging will be implemented later.
+        handler(*job);
     }
 }
 
