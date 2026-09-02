@@ -246,6 +246,24 @@ Execution ExecutionRepository::create(
     return execution;
 }
 
+void ExecutionRepository::update(
+    const Execution& execution
+) {
+    json data = loadFile(file_path);
+
+    for (auto& item : data) {
+        if (item.at("id") == execution.id) {
+            item = executionToJson(execution);
+            saveFile(file_path, data);
+            return;
+        }
+    }
+
+    throw std::runtime_error(
+        "Execution not found: " + execution.id
+    );
+}
+
 std::optional<Execution>
 ExecutionRepository::getById(
     const std::string& id

@@ -60,6 +60,22 @@ target_include_directories(worker_pool_test PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
+add_executable(judge_test
+    tests/JudgeTest.cpp
+    src/judge/Judge.cpp
+    src/repository/SubmissionRepository.cpp
+    src/repository/ExecutionRepository.cpp
+    src/utils/SubmissionStatus.cpp
+)
+
+target_include_directories(judge_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
+target_link_libraries(judge_test PRIVATE
+    nlohmann_json::nlohmann_json
+)
+
 target_include_directories(online_judge PRIVATE
     include
 )

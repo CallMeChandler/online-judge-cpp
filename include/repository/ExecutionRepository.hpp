@@ -12,6 +12,8 @@ public:
 
     Execution create(Execution execution);
 
+    void update(const Execution& execution);
+
     std::optional<Execution> getById(
         const std::string& id
     ) const;

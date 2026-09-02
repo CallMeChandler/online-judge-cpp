@@ -69,5 +69,21 @@ int main() {
     std::cout
         << "ExecutionRepository test passed\n";
 
+    created.status = ExecutionStatus::FINISHED;
+    created.verdict = Verdict::AC;
+    created.execution_time_ms = 42;
+
+    repository.update(created);
+
+    auto updated =
+        repository.getById(created.id);
+
+    assert(updated.has_value());
+    assert(updated->status == ExecutionStatus::FINISHED);
+    assert(updated->verdict == Verdict::AC);
+    assert(updated->execution_time_ms == 42);
+
+    std::cout << "update() passed\n";
+
     return 0;
 }
