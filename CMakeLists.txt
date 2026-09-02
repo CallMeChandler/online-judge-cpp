@@ -43,6 +43,19 @@ add_executable(worker_pool_test
     src/worker/WorkerPool.cpp
 )
 
+add_executable(execution_repository_test
+    tests/ExecutionRepositoryTest.cpp
+    src/repository/ExecutionRepository.cpp
+)
+
+target_include_directories(execution_repository_test PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+)
+
+target_link_libraries(execution_repository_test PRIVATE
+    nlohmann_json::nlohmann_json
+)
+
 target_include_directories(worker_pool_test PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
