@@ -6,10 +6,12 @@
 
 SubmissionService::SubmissionService(
     SubmissionRepository repository,
-    ProblemService& problem_service
+    ProblemService& problem_service,
+    BlockingQueue<JudgeJob>& judge_queue
 )
     : repository(std::move(repository)),
-      problem_service(problem_service) {
+      problem_service(problem_service),
+      judge_queue(judge_queue) {
 }
 
 Submission SubmissionService::createSubmission(
@@ -37,7 +39,15 @@ Submission SubmissionService::createSubmission(
     submission.status = SubmissionStatus::QUEUED;
     submission.created_at = std::chrono::system_clock::now();
 
-    return repository.create(std::move(submission));
+    Submission saved_submission =
+    repository.create(std::move(submission));
+
+    JudgeJob job;
+    job.submission_id = saved_submission.id;
+
+    judge_queue.push(std::move(job));
+
+    return saved_submission;
 }
 
 std::optional<Submission>
