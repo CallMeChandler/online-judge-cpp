@@ -76,6 +76,15 @@ target_link_libraries(judge_test PRIVATE
     nlohmann_json::nlohmann_json
 )
 
+add_executable(compiler_test
+    tests/CompilerTest.cpp
+    src/utils/Compiler.cpp
+)
+
+target_include_directories(compiler_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
 target_include_directories(online_judge PRIVATE
     include
 )
