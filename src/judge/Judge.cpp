@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <stdexcept>
+#include <iostream>
 
 Judge::Judge(
     SubmissionRepository& submission_repository,
@@ -13,6 +14,11 @@ Judge::Judge(
 
 void Judge::judge(const JudgeJob& job) {
     auto submission = submission_repository.getById(job.submission_id);
+
+    std::cout
+        << "[Judge] Evaluating submission "
+        << submission->id
+        << std::endl;
 
     if (!submission) {
         throw std::runtime_error(

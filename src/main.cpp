@@ -8,6 +8,8 @@
 #include "queue/BlockingQueue.hpp"
 #include "worker/WorkerPool.hpp"
 #include "models/JudgeJob.hpp"
+#include "repository/ExecutionRepository.hpp"
+#include "judge/Judge.hpp"
 
 crow::json::wvalue serializeProblem(const Problem& problem) {
     crow::json::wvalue json;
@@ -40,7 +42,13 @@ int main() {
     ProblemRepository repository("../data/problems.json");
     ProblemService service(repository);
 
-    SubmissionRepository submission_repository("../data/submissions.json");
+    SubmissionRepository submission_repository(
+        "../data/submissions.json"
+    );
+
+    ExecutionRepository execution_repository(
+        "../data/executions.json"
+    );
 
     BlockingQueue<JudgeJob> judge_queue;
 
@@ -50,14 +58,16 @@ int main() {
         judge_queue
     );
 
+    Judge judge(
+        submission_repository,
+        execution_repository
+    );
+
     WorkerPool worker_pool(
         judge_queue,
         3,
-        [](const JudgeJob& job){
-            std::cout
-                << "Worker recieved submission:"
-                << job.submission_id
-                << std::endl;
+        [&judge](const JudgeJob& job) {
+            judge.judge(job);
         }
     );
 
