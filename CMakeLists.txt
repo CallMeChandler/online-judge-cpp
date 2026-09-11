@@ -85,6 +85,16 @@ target_include_directories(compiler_test PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
+add_executable(process_runner_test
+    tests/ProcessRunnerTest.cpp
+    src/utils/Compiler.cpp
+    src/utils/ProcessRunner.cpp
+)
+
+target_include_directories(process_runner_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
 target_include_directories(online_judge PRIVATE
     include
 )
