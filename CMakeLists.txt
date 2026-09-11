@@ -95,6 +95,16 @@ target_include_directories(process_runner_test PRIVATE
     ${PROJECT_SOURCE_DIR}/include
 )
 
+add_executable(timeout_test
+    tests/TimeoutTests.cpp
+    src/utils/Compiler.cpp
+    src/utils/ProcessRunner.cpp
+)
+
+target_include_directories(timeout_test PRIVATE
+    ${PROJECT_SOURCE_DIR}/include
+)
+
 target_include_directories(online_judge PRIVATE
     include
 )
