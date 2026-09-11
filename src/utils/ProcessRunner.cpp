@@ -11,7 +11,8 @@
 
 ProcessResult ProcessRunner::run(
     const std::string& executable_path,
-    const std::string& input
+    const std::string& input,
+    long long timeout_ms
 ) const {
 
     std::string input_path =
@@ -57,19 +58,52 @@ ProcessResult ProcessRunner::run(
 
     ssize_t bytes;
 
+    int status = 0;
+
+    while (true) {
+
+        pid_t result =
+            waitpid(pid, &status, WNOHANG);
+
+        if (result == pid) {
+            break;
+        }
+
+        auto now =
+            std::chrono::steady_clock::now();
+
+        auto elapsed =
+            std::chrono::duration_cast<
+                std::chrono::milliseconds
+            >(now - start).count();
+
+        if (elapsed > timeout_ms) {
+
+            kill(pid, SIGKILL);
+
+            waitpid(pid, &status, 0);
+
+            return {
+                -1,
+                output,
+                elapsed,
+                false,
+                true
+            };
+        }
+
+        usleep(1000);
+    }
+
     while ((bytes = read(
         pipefd[0],
         buffer.data(),
         buffer.size()
     )) > 0) {
-        output.append(buffer.data(), bytes);
-    }
+            output.append(buffer.data(), bytes);
+        }
 
-    close(pipefd[0]);
-
-    int status;
-
-    waitpid(pid, &status, 0);
+        close(pipefd[0]);
 
     auto end = std::chrono::steady_clock::now();
 
@@ -80,8 +114,7 @@ ProcessResult ProcessRunner::run(
 
     ProcessResult result;
 
-    result.execution_time_ms = elapsed;
-    result.stdout_output = output;
+    result.timeout = false;
 
     if (WIFEXITED(status)) {
         result.exit_code = WEXITSTATUS(status);
@@ -91,6 +124,9 @@ ProcessResult ProcessRunner::run(
         result.exit_code = -1;
         result.runtime_error = true;
     }
+
+    result.execution_time_ms = elapsed;
+    result.stdout_output = output;
 
     return result;
 }

@@ -25,7 +25,8 @@ int main() {
 
     auto result = runner.run(
         compile_result.executable_path,
-        "2 3"
+        "2 3",
+        1000
     );
 
     assert(result.exit_code == 0);

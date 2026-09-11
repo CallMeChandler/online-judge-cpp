@@ -10,12 +10,15 @@ struct ProcessResult {
     long long execution_time_ms;
 
     bool runtime_error;
+
+    bool timeout;
 };
 
 class ProcessRunner {
 public:
     ProcessResult run(
         const std::string& executable_path,
-        const std::string& input
+        const std::string& input,
+        long long timeout_ms
     ) const;
 };
