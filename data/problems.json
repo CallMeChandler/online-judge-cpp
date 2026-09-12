@@ -2,32 +2,54 @@
     {
         "id": 1,
         "title": "Two Sum",
-        "description": "Given an array of integers and a target, return the indices of the two numbers that add up to the target.",
+        "description": "Given an array of integers and a target, print the indices of the two numbers that add up to the target, smaller index first.\n\nInput: n on the first line, then n integers on the second line, then the target on the third line.\nOutput: the two indices separated by a space.",
         "difficulty": "Easy",
         "tags": [
             "Array",
             "Hash Table"
         ],
         "constraints": [
-            "2 <= nums.length <= 10000",
-            "-10^9 <= nums[i] <= 10^9"
+            "2 <= n <= 10000",
+            "-10^9 <= nums[i] <= 10^9",
+            "Exactly one valid pair exists"
         ],
         "sample_test_cases": [
             {
-                "input": "nums = [2,7,11,15], target = 9",
-                "expected_output": "[0,1]"
+                "input": "4\n2 7 11 15\n9\n",
+                "expected_output": "0 1"
             },
             {
-                "input": "nums = [3,2,4], target = 6",
-                "expected_output": "[1,2]"
+                "input": "3\n3 2 4\n6\n",
+                "expected_output": "1 2"
             }
         ],
-        "hidden_test_cases": []
+        "hidden_test_cases": [
+            {
+                "input": "2\n3 3\n6\n",
+                "expected_output": "0 1"
+            },
+            {
+                "input": "5\n1 5 3 9 7\n16\n",
+                "expected_output": "3 4"
+            },
+            {
+                "input": "4\n-1 -2 -3 -4\n-7\n",
+                "expected_output": "2 3"
+            },
+            {
+                "input": "6\n10 20 30 40 50 60\n110\n",
+                "expected_output": "4 5"
+            },
+            {
+                "input": "3\n1000000000 -1000000000 5\n0\n",
+                "expected_output": "0 1"
+            }
+        ]
     },
     {
         "id": 2,
         "title": "Valid Parentheses",
-        "description": "Given a string containing brackets, determine whether the input string is valid.",
+        "description": "Given a string containing brackets, determine whether it is valid: every opening bracket is closed by the same type in the correct order.\n\nInput: the string s on a single line.\nOutput: true or false.",
         "difficulty": "Easy",
         "tags": [
             "String",
@@ -35,19 +57,44 @@
         ],
         "constraints": [
             "1 <= s.length <= 10000",
-            "s consists of parentheses only"
+            "s consists of the characters ()[]{} only"
         ],
         "sample_test_cases": [
             {
-                "input": "s = \"()\"",
+                "input": "()\n",
                 "expected_output": "true"
             },
             {
-                "input": "s = \"([)]\"",
+                "input": "([)]\n",
                 "expected_output": "false"
             }
         ],
-        "hidden_test_cases": []
+        "hidden_test_cases": [
+            {
+                "input": "()[]{}\n",
+                "expected_output": "true"
+            },
+            {
+                "input": "(]\n",
+                "expected_output": "false"
+            },
+            {
+                "input": "{[()]}\n",
+                "expected_output": "true"
+            },
+            {
+                "input": "(((\n",
+                "expected_output": "false"
+            },
+            {
+                "input": "))\n",
+                "expected_output": "false"
+            },
+            {
+                "input": "([{}])\n",
+                "expected_output": "true"
+            }
+        ]
     },
     {
         "id": 3,
