@@ -12,11 +12,12 @@
 
 namespace {
 
-// Problem 3 in data/problems.json ("A + B").
-// First sample: "2 7" -> "9".
+// Problem 3 in data/problems.json ("A + B") has two samples:
+//   "2 7"   -> "9"
+//   "-4 10" -> "6"
 constexpr int PROBLEM_ID = 3;
 
-Verdict runJudge(
+Execution runJudge(
     SubmissionRepository& submission_repository,
     ExecutionRepository& execution_repository,
     ProblemRepository& problem_repository,
@@ -57,7 +58,7 @@ Verdict runJudge(
     assert(execution.submission_id == submission.id);
     assert(execution.status == ExecutionStatus::FINISHED);
 
-    return execution.verdict;
+    return execution;
 }
 
 } // namespace
@@ -75,12 +76,18 @@ int main() {
         "../data/executions.json"
     );
 
+    auto judge = [&](const std::string& source_code) {
+        return runJudge(
+            submission_repository,
+            execution_repository,
+            problem_repository,
+            source_code
+        );
+    };
+
     // Regression: a correct program whose stdout ends with a
     // newline must be AC, not WA.
-    Verdict correct = runJudge(
-        submission_repository,
-        execution_repository,
-        problem_repository,
+    auto correct = judge(
         "#include <iostream>\n"
         "int main() {\n"
         "    int a, b;\n"
@@ -89,15 +96,12 @@ int main() {
         "}\n"
     );
 
-    assert(correct == Verdict::AC);
-    std::cout << "Verdict: AC (trailing newline normalized)\n";
+    assert(correct.verdict == Verdict::AC);
+    std::cout << "AC: trailing newline normalized\n";
 
     // Normalization must only trim whitespace, never make
     // a wrong answer pass.
-    Verdict wrong = runJudge(
-        submission_repository,
-        execution_repository,
-        problem_repository,
+    auto wrong = judge(
         "#include <iostream>\n"
         "int main() {\n"
         "    int a, b;\n"
@@ -106,8 +110,63 @@ int main() {
         "}\n"
     );
 
-    assert(wrong == Verdict::WA);
-    std::cout << "Verdict: WA (wrong answer still rejected)\n";
+    assert(wrong.verdict == Verdict::WA);
+    std::cout << "WA: wrong answer still rejected\n";
+
+    // Every sample runs: this passes sample 1 ("9") and fails
+    // sample 2 ("6"). Judging only sample 1 would report AC.
+    auto second_sample = judge(
+        "#include <iostream>\n"
+        "int main() {\n"
+        "    int a, b;\n"
+        "    std::cin >> a >> b;\n"
+        "    std::cout << 9 << std::endl;\n"
+        "}\n"
+    );
+
+    assert(second_sample.verdict == Verdict::WA);
+    std::cout << "WA: failure on the second sample is caught\n";
+
+    // Fail fast: sample 1 is wrong, sample 2 would loop forever.
+    // Continuing past the first failure would report TLE.
+    auto fail_fast = judge(
+        "#include <iostream>\n"
+        "int main() {\n"
+        "    int a, b;\n"
+        "    std::cin >> a >> b;\n"
+        "    if (a == 2) {\n"
+        "        std::cout << 0 << std::endl;\n"
+        "        return 0;\n"
+        "    }\n"
+        "    while (true) {}\n"
+        "}\n"
+    );
+
+    assert(fail_fast.verdict == Verdict::WA);
+    assert(fail_fast.execution_time_ms < 1000);
+    std::cout << "WA: stopped before running the remaining samples ("
+              << fail_fast.execution_time_ms << " ms)\n";
+
+    // Execution time is summed across samples: ~200 ms of sleep
+    // per sample over two samples cannot total under 400 ms.
+    auto summed = judge(
+        "#include <chrono>\n"
+        "#include <iostream>\n"
+        "#include <thread>\n"
+        "int main() {\n"
+        "    int a, b;\n"
+        "    std::cin >> a >> b;\n"
+        "    std::this_thread::sleep_for(\n"
+        "        std::chrono::milliseconds(200)\n"
+        "    );\n"
+        "    std::cout << a + b << std::endl;\n"
+        "}\n"
+    );
+
+    assert(summed.verdict == Verdict::AC);
+    assert(summed.execution_time_ms >= 400);
+    std::cout << "AC: time summed across samples ("
+              << summed.execution_time_ms << " ms)\n";
 
     std::cout << "Judge test passed\n";
 

@@ -15,8 +15,18 @@ ProcessResult ProcessRunner::run(
     long long timeout_ms
 ) const {
 
+    // stdin is staged per executable, not in one shared file:
+    // worker threads judge different submissions at the same
+    // time and would otherwise feed each other's input.
+    auto slash = executable_path.find_last_of('/');
+
+    std::string name =
+        slash == std::string::npos
+            ? executable_path
+            : executable_path.substr(slash + 1);
+
     std::string input_path =
-        "../sandbox/tmp/input.txt";
+        "../sandbox/tmp/" + name + ".in";
 
     std::ofstream input_file(input_path);
     input_file << input;
