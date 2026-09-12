@@ -60,7 +60,8 @@ int main() {
 
     Judge judge(
         submission_repository,
-        execution_repository
+        execution_repository,
+        repository
     );
 
     WorkerPool worker_pool(

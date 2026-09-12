@@ -3,12 +3,16 @@
 #include "models/JudgeJob.hpp"
 #include "repository/ExecutionRepository.hpp"
 #include "repository/SubmissionRepository.hpp"
+#include "repository/ProblemRepository.hpp"
+#include "utils/Compiler.hpp"
+#include "utils/ProcessRunner.hpp"
 
 class Judge {
 public:
     Judge(
         SubmissionRepository& submission_repository,
-        ExecutionRepository& execution_repository
+        ExecutionRepository& execution_repository,
+        ProblemRepository& problem_repository
     );
 
     void judge(const JudgeJob& job);
@@ -16,4 +20,8 @@ public:
 private:
     SubmissionRepository& submission_repository;
     ExecutionRepository& execution_repository;
+    ProblemRepository& problem_repository;
+
+    Compiler compiler;
+    ProcessRunner runner;
 };

@@ -62,9 +62,15 @@ target_include_directories(worker_pool_test PRIVATE
 
 add_executable(judge_test
     tests/JudgeTest.cpp
+
     src/judge/Judge.cpp
+
+    src/repository/ProblemRepository.cpp
     src/repository/SubmissionRepository.cpp
     src/repository/ExecutionRepository.cpp
+
+    src/utils/Compiler.cpp
+    src/utils/ProcessRunner.cpp
     src/utils/SubmissionStatus.cpp
 )
 

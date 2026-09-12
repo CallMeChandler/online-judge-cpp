@@ -24,6 +24,8 @@ public:
 
     std::vector<Execution> getAll() const;
 
+    void updateExecution(const Execution& execution);
+
 private:
     std::string file_path;
 

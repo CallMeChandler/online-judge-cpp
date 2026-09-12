@@ -1,28 +1,33 @@
+
 #include "judge/Judge.hpp"
 
+#include "repository/ExecutionRepository.hpp"
 #include "repository/ProblemRepository.hpp"
-#include "service/ProblemService.hpp"
+#include "repository/SubmissionRepository.hpp"
 
 #include <cassert>
+#include <chrono>
 #include <iostream>
+#include <string>
 
-int main() {
+namespace {
 
-    SubmissionRepository submission_repository(
-        "../data/submissions.json"
-    );
+// Problem 3 in data/problems.json ("A + B").
+// First sample: "2 7" -> "9".
+constexpr int PROBLEM_ID = 3;
 
-    ExecutionRepository execution_repository(
-        "../data/executions.json"
-    );
-
-    // Create a real submission first.
+Verdict runJudge(
+    SubmissionRepository& submission_repository,
+    ExecutionRepository& execution_repository,
+    ProblemRepository& problem_repository,
+    const std::string& source_code
+) {
     Submission submission =
         submission_repository.create(
             Submission{
                 "",
-                1,
-                "int main() { return 0; }",
+                PROBLEM_ID,
+                source_code,
                 "cpp",
                 SubmissionStatus::QUEUED,
                 std::chrono::system_clock::now()
@@ -31,7 +36,8 @@ int main() {
 
     Judge judge(
         submission_repository,
-        execution_repository
+        execution_repository,
+        problem_repository
     );
 
     JudgeJob job;
@@ -49,16 +55,61 @@ int main() {
     const Execution& execution = executions.back();
 
     assert(execution.submission_id == submission.id);
-    assert(execution.status == ExecutionStatus::COMPILING);
-    assert(execution.verdict == Verdict::NONE);
+    assert(execution.status == ExecutionStatus::FINISHED);
 
-    std::cout
-        << "Judge created execution: "
-        << execution.id
-        << '\n';
+    return execution.verdict;
+}
 
-    std::cout
-        << "Judge test passed\n";
+} // namespace
+
+int main() {
+    ProblemRepository problem_repository(
+        "../data/problems.json"
+    );
+
+    SubmissionRepository submission_repository(
+        "../data/submissions.json"
+    );
+
+    ExecutionRepository execution_repository(
+        "../data/executions.json"
+    );
+
+    // Regression: a correct program whose stdout ends with a
+    // newline must be AC, not WA.
+    Verdict correct = runJudge(
+        submission_repository,
+        execution_repository,
+        problem_repository,
+        "#include <iostream>\n"
+        "int main() {\n"
+        "    int a, b;\n"
+        "    std::cin >> a >> b;\n"
+        "    std::cout << a + b << std::endl;\n"
+        "}\n"
+    );
+
+    assert(correct == Verdict::AC);
+    std::cout << "Verdict: AC (trailing newline normalized)\n";
+
+    // Normalization must only trim whitespace, never make
+    // a wrong answer pass.
+    Verdict wrong = runJudge(
+        submission_repository,
+        execution_repository,
+        problem_repository,
+        "#include <iostream>\n"
+        "int main() {\n"
+        "    int a, b;\n"
+        "    std::cin >> a >> b;\n"
+        "    std::cout << a - b << std::endl;\n"
+        "}\n"
+    );
+
+    assert(wrong == Verdict::WA);
+    std::cout << "Verdict: WA (wrong answer still rejected)\n";
+
+    std::cout << "Judge test passed\n";
 
     return 0;
 }
