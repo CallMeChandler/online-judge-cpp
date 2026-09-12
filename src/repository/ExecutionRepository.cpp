@@ -1,5 +1,8 @@
 #include "repository/ExecutionRepository.hpp"
 
+#include "utils/ExecutionStatus.hpp"
+#include "utils/Verdict.hpp"
+
 #include <fstream>
 #include <iomanip>
 #include <random>
@@ -11,102 +14,6 @@
 using json = nlohmann::json;
 
 namespace {
-
-std::string executionStatusToString(ExecutionStatus status) {
-    switch (status) {
-        case ExecutionStatus::QUEUED:
-            return "QUEUED";
-
-        case ExecutionStatus::COMPILING:
-            return "COMPILING";
-
-        case ExecutionStatus::RUNNING:
-            return "RUNNING";
-
-        case ExecutionStatus::FINISHED:
-            return "FINISHED";
-    }
-
-    throw std::invalid_argument("Invalid execution status");
-}
-
-ExecutionStatus executionStatusFromString(
-    const std::string& status
-) {
-    if (status == "QUEUED") {
-        return ExecutionStatus::QUEUED;
-    }
-
-    if (status == "COMPILING") {
-        return ExecutionStatus::COMPILING;
-    }
-
-    if (status == "RUNNING") {
-        return ExecutionStatus::RUNNING;
-    }
-
-    if (status == "FINISHED") {
-        return ExecutionStatus::FINISHED;
-    }
-
-    throw std::invalid_argument(
-        "Invalid execution status: " + status
-    );
-}
-
-std::string verdictToString(Verdict verdict) {
-    switch (verdict) {
-        case Verdict::NONE:
-            return "NONE";
-
-        case Verdict::AC:
-            return "AC";
-
-        case Verdict::WA:
-            return "WA";
-
-        case Verdict::RE:
-            return "RE";
-
-        case Verdict::CE:
-            return "CE";
-
-        case Verdict::TLE:
-            return "TLE";
-    }
-
-    throw std::invalid_argument("Invalid verdict");
-}
-
-Verdict verdictFromString(const std::string& verdict) {
-    if (verdict == "NONE") {
-        return Verdict::NONE;
-    }
-
-    if (verdict == "AC") {
-        return Verdict::AC;
-    }
-
-    if (verdict == "WA") {
-        return Verdict::WA;
-    }
-
-    if (verdict == "RE") {
-        return Verdict::RE;
-    }
-
-    if (verdict == "CE") {
-        return Verdict::CE;
-    }
-
-    if (verdict == "TLE") {
-        return Verdict::TLE;
-    }
-
-    throw std::invalid_argument(
-        "Invalid verdict: " + verdict
-    );
-}
 
 json executionToJson(const Execution& execution) {
     json item;

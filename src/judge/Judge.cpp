@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <string>
+#include <vector>
 #include <iostream>
 #include <stdexcept>
 #include <utility>
@@ -27,6 +28,41 @@ std::string normalizeOutput(const std::string& output) {
     auto last = output.find_last_not_of(whitespace);
 
     return output.substr(first, last - first + 1);
+}
+
+// Runs test cases in order and stops at the first failure.
+// Time spent by the cases that actually ran is added to
+// total_time_ms, which the caller accumulates across groups.
+Verdict runTestCases(
+    const ProcessRunner& runner,
+    const std::string& executable_path,
+    const std::vector<TestCase>& tests,
+    long long& total_time_ms
+) {
+    for (const auto& test : tests) {
+        auto result = runner.run(
+            executable_path,
+            test.input,
+            TIME_LIMIT_MS
+        );
+
+        total_time_ms += result.execution_time_ms;
+
+        if (result.timeout) {
+            return Verdict::TLE;
+        }
+
+        if (result.runtime_error) {
+            return Verdict::RE;
+        }
+
+        if (normalizeOutput(result.stdout_output) !=
+            normalizeOutput(test.expected_output)) {
+            return Verdict::WA;
+        }
+    }
+
+    return Verdict::AC;
 }
 
 } // namespace
@@ -88,37 +124,24 @@ void Judge::judge(const JudgeJob& job) {
     execution.status = ExecutionStatus::RUNNING;
     execution_repository.updateExecution(execution);
 
-    // Every sample runs sequentially. The first failing sample
-    // decides the verdict and the remaining ones are skipped,
-    // so execution_time_ms is the sum over the samples that
-    // actually ran.
+    // Samples first, hidden tests only once every sample passed.
+    // execution_time_ms is the sum over the cases that ran.
     long long total_time_ms = 0;
-    Verdict verdict = Verdict::AC;
 
-    for (const auto& test : problem->sample_test_cases) {
-        auto result = runner.run(
+    Verdict verdict = runTestCases(
+        runner,
+        compile_result.executable_path,
+        problem->sample_test_cases,
+        total_time_ms
+    );
+
+    if (verdict == Verdict::AC) {
+        verdict = runTestCases(
+            runner,
             compile_result.executable_path,
-            test.input,
-            TIME_LIMIT_MS
+            problem->hidden_test_cases,
+            total_time_ms
         );
-
-        total_time_ms += result.execution_time_ms;
-
-        if (result.timeout) {
-            verdict = Verdict::TLE;
-            break;
-        }
-
-        if (result.runtime_error) {
-            verdict = Verdict::RE;
-            break;
-        }
-
-        if (normalizeOutput(result.stdout_output) !=
-            normalizeOutput(test.expected_output)) {
-            verdict = Verdict::WA;
-            break;
-        }
     }
 
     execution.status = ExecutionStatus::FINISHED;

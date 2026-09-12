@@ -21,7 +21,8 @@
                 "input": "nums = [3,2,4], target = 6",
                 "expected_output": "[1,2]"
             }
-        ]
+        ],
+        "hidden_test_cases": []
     },
     {
         "id": 2,
@@ -45,7 +46,8 @@
                 "input": "s = \"([)]\"",
                 "expected_output": "false"
             }
-        ]
+        ],
+        "hidden_test_cases": []
     },
     {
         "id": 3,
@@ -67,6 +69,24 @@
             {
                 "input": "-4 10\n",
                 "expected_output": "6"
+            }
+        ],
+        "hidden_test_cases": [
+            {
+                "input": "0 0\n",
+                "expected_output": "0"
+            },
+            {
+                "input": "-5 -7\n",
+                "expected_output": "-12"
+            },
+            {
+                "input": "1000000000 1000000000\n",
+                "expected_output": "2000000000"
+            },
+            {
+                "input": "123456 -123456\n",
+                "expected_output": "0"
             }
         ]
     }

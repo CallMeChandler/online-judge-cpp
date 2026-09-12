@@ -36,12 +36,23 @@ std::vector<Problem> ProblemRepository::getAll() const {
             item.at("constraints").get<std::vector<std::string>>();
 
         for (const auto& test : item.at("sample_test_cases")) {
-            SampleTestCase sample;
+            TestCase sample;
 
             sample.input = test.at("input");
             sample.expected_output = test.at("expected_output");
 
             problem.sample_test_cases.push_back(sample);
+        }
+
+        // Optional: older problems have no hidden tests.
+        for (const auto& test :
+             item.value("hidden_test_cases", json::array())) {
+            TestCase hidden;
+
+            hidden.input = test.at("input");
+            hidden.expected_output = test.at("expected_output");
+
+            problem.hidden_test_cases.push_back(hidden);
         }
 
         problems.push_back(problem);

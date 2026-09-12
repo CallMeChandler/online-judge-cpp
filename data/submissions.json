@@ -238,5 +238,165 @@
         "problem_id": 3,
         "source_code": "#include <iostream>\nint main(){int a,b;std::cin>>a>>b;int*p=nullptr;*p=1;}",
         "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243231665,
+        "id": "240681a7e7b3b137",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << a + b << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243232776,
+        "id": "cef12026a59549ab",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << a - b << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243233798,
+        "id": "7a900b11b0b3dc1b",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << 9 << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243234863,
+        "id": "1fb2734e420b0c80",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    if (a == 2) {\n        std::cout << 0 << std::endl;\n        return 0;\n    }\n    while (true) {}\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243235899,
+        "id": "e14001436d56ddb8",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <chrono>\n#include <iostream>\n#include <thread>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::this_thread::sleep_for(\n        std::chrono::milliseconds(200)\n    );\n    std::cout << a + b << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243239281,
+        "id": "36ea938397c50621",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    if (a == 2 && b == 7) {\n        std::cout << 9 << std::endl;\n    } else if (a == -4 && b == 10) {\n        std::cout << 6 << std::endl;\n    } else {\n        std::cout << 0 << std::endl;\n    }\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243260327,
+        "id": "c9fbe5a5f6f433ad",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << a + b << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243261401,
+        "id": "e6f2da7f5eb3c45b",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << a - b << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243262469,
+        "id": "825338a1ed77a3a5",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << 9 << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243263524,
+        "id": "05eed4c0c38ad3a9",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    if (a == 2) {\n        std::cout << 0 << std::endl;\n        return 0;\n    }\n    while (true) {}\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243264590,
+        "id": "9d99acfb50d4f96d",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <chrono>\n#include <iostream>\n#include <thread>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::this_thread::sleep_for(\n        std::chrono::milliseconds(200)\n    );\n    std::cout << a + b << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243267820,
+        "id": "eb0c4a017340d383",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    if (a == 2 && b == 7) {\n        std::cout << 9 << std::endl;\n    } else if (a == -4 && b == 10) {\n        std::cout << 6 << std::endl;\n    } else {\n        std::cout << 0 << std::endl;\n    }\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243340410,
+        "id": "7641ccacb63d0513",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main(){int a,b;std::cin>>a>>b;std::cout<<a+b<<std::endl;}",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243340505,
+        "id": "bac95309d8a436b7",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main(){int a,b;std::cin>>a>>b;\n if(a==2&&b==7)std::cout<<9<<std::endl;\n else if(a==-4&&b==10)std::cout<<6<<std::endl;\n else std::cout<<0<<std::endl;}",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243356607,
+        "id": "5db93fa32d0ae7b4",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << a + b << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243357700,
+        "id": "bebb9e2ce9716104",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << a - b << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243358758,
+        "id": "88c071f9589c5a8e",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::cout << 9 << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243359844,
+        "id": "dc44a9560a980687",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    if (a == 2) {\n        std::cout << 0 << std::endl;\n        return 0;\n    }\n    while (true) {}\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243360905,
+        "id": "df930d1a8d1f85ef",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <chrono>\n#include <iostream>\n#include <thread>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    std::this_thread::sleep_for(\n        std::chrono::milliseconds(200)\n    );\n    std::cout << a + b << std::endl;\n}\n",
+        "status": "QUEUED"
+    },
+    {
+        "created_at": 1789243364283,
+        "id": "eb0636e7300d33e5",
+        "language": "cpp",
+        "problem_id": 3,
+        "source_code": "#include <iostream>\nint main() {\n    int a, b;\n    std::cin >> a >> b;\n    if (a == 2 && b == 7) {\n        std::cout << 9 << std::endl;\n    } else if (a == -4 && b == 10) {\n        std::cout << 6 << std::endl;\n    } else {\n        std::cout << 0 << std::endl;\n    }\n}\n",
+        "status": "QUEUED"
     }
 ]

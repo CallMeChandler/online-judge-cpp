@@ -3,101 +3,517 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Online Judge</title>
 
     <style>
+        :root {
+            --bg: #f4f5f7;
+            --panel: #ffffff;
+            --border: #e2e4e9;
+            --text: #1c1e23;
+            --muted: #6b7280;
+            --accent: #1c1e23;
+            --ok: #15803d;
+            --bad: #b91c1c;
+            --warn: #b45309;
+            --idle: #9ca3af;
+        }
+
         * {
             box-sizing: border-box;
-            font-family: Arial, sans-serif;
         }
 
         body {
-            margin: 40px;
-            background: #f5f5f5;
+            margin: 0;
+            padding: 32px 24px 64px;
+            background: var(--bg);
+            color: var(--text);
+            font: 14px/1.5 -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         }
 
-        h1 {
-            margin-bottom: 8px;
+        .wrap {
+            max-width: 1100px;
+            margin: 0 auto;
         }
 
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+        header h1 {
+            margin: 0 0 4px;
+            font-size: 22px;
+        }
+
+        header p {
+            margin: 0 0 24px;
+            color: var(--muted);
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+
+        @media (max-width: 860px) {
+            .layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .panel h2 {
+            margin: 0 0 12px;
+            font-size: 13px;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--muted);
         }
 
         .problem {
-            padding: 12px;
-            border: 1px solid #ddd;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
             border-radius: 8px;
-            margin-top: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            background: #fff;
         }
 
-        .difficulty {
-            display: inline-block;
-            margin-top: 8px;
-            color: green;
-            font-weight: bold;
+        .problem:hover {
+            border-color: #c3c7cf;
+        }
+
+        .problem.active {
+            border-color: var(--accent);
+            box-shadow: inset 2px 0 0 var(--accent);
+        }
+
+        .problem .title {
+            font-weight: 600;
+        }
+
+        .problem .meta {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .desc {
+            margin: 0 0 12px;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .chip {
+            font-size: 12px;
+            padding: 2px 8px;
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            color: var(--muted);
+        }
+
+        ul.constraints {
+            margin: 0 0 12px;
+            padding-left: 18px;
+            color: var(--muted);
+        }
+
+        pre.sample {
+            margin: 0 0 8px;
+            padding: 10px;
+            background: #f8f9fb;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font: 12px/1.5 ui-monospace, Menlo, Consolas, monospace;
+            white-space: pre-wrap;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 12px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font: 13px/1.6 ui-monospace, Menlo, Consolas, monospace;
+            resize: vertical;
+            tab-size: 4;
         }
 
         button {
-            margin-top: 18px;
-            padding: 10px 16px;
+            margin-top: 12px;
+            padding: 9px 18px;
             border: none;
-            background: black;
-            color: white;
             border-radius: 8px;
+            background: var(--accent);
+            color: #fff;
+            font-weight: 600;
             cursor: pointer;
         }
 
-        button:hover {
-            opacity: .9;
+        button:disabled {
+            opacity: .5;
+            cursor: default;
+        }
+
+        .timeline {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 4px 0 16px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--idle);
+        }
+
+        .step .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #d8dae0;
+        }
+
+        .step.done {
+            color: var(--text);
+        }
+
+        .step.done .dot {
+            background: var(--ok);
+        }
+
+        .step.current {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .step.current .dot {
+            background: var(--warn);
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            50% {
+                opacity: .3;
+            }
+        }
+
+        .arrow {
+            color: #d8dae0;
+            font-size: 12px;
+        }
+
+        .result {
+            display: flex;
+            align-items: baseline;
+            gap: 14px;
+            flex-wrap: wrap;
+        }
+
+        .verdict {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: .02em;
+        }
+
+        .verdict.AC {
+            color: var(--ok);
+        }
+
+        .verdict.WA,
+        .verdict.RE,
+        .verdict.CE,
+        .verdict.TLE {
+            color: var(--bad);
+        }
+
+        .verdict.NONE {
+            color: var(--idle);
+        }
+
+        .kv {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .kv b {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .note {
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        code.id {
+            font: 12px ui-monospace, Menlo, Consolas, monospace;
         }
     </style>
 </head>
 
 <body>
+    <div class="wrap">
 
-    <h1>LeetCode Online Judge</h1>
-    <p>Production-inspired C++ backend</p>
+        <header>
+            <h1>Online Judge</h1>
+            <p>C++20 backend &middot; queue &rarr; worker pool &rarr; judge</p>
+        </header>
 
-    <button onclick="loadProblems()">
-        Load Problems
-    </button>
+        <div class="layout">
 
-    <div id="problem-list" class="card">
-        <h2>Problems</h2>
-        <p>Click the button to fetch problems.</p>
+            <section class="panel">
+                <h2>Problems</h2>
+                <div id="problem-list">Loading&hellip;</div>
+            </section>
+
+            <div>
+                <section class="panel" id="detail-panel">
+                    <h2>Problem</h2>
+                    <div id="detail">Select a problem.</div>
+                </section>
+
+                <section class="panel" style="margin-top:20px">
+                    <h2>Solution</h2>
+                    <textarea id="code" spellcheck="false"></textarea>
+                    <button id="submit" disabled>Submit</button>
+                    <div class="note" id="hint"></div>
+                </section>
+
+                <section class="panel" style="margin-top:20px">
+                    <h2>Execution</h2>
+
+                    <div class="timeline" id="timeline"></div>
+
+                    <div class="result">
+                        <span class="verdict NONE" id="verdict">&mdash;</span>
+                        <span class="kv">time <b id="time">&mdash;</b></span>
+                        <span class="kv">submission <b><code class="id" id="sid">&mdash;</code></b></span>
+                    </div>
+
+                    <div class="note" id="status-note">
+                        Submit a solution to start an execution.
+                    </div>
+                </section>
+            </div>
+
+        </div>
     </div>
 
     <script>
-        async function loadProblems() {
+        const STEPS = ["QUEUED", "COMPILING", "RUNNING", "FINISHED"];
 
-            const response = await fetch("/problems");
-            const problems = await response.json();
+        const TEMPLATE =
+            "#include <iostream>\n" +
+            "\n" +
+            "int main() {\n" +
+            "    int a, b;\n" +
+            "    std::cin >> a >> b;\n" +
+            "    std::cout << a + b << std::endl;\n" +
+            "}\n";
 
-            const container = document.getElementById("problem-list");
+        let problems = [];
+        let selected = null;
+        let poller = null;
 
-            container.innerHTML = "<h2>Problems</h2>";
+        const $ = id => document.getElementById(id);
 
-            problems.forEach(problem => {
-
-                const div = document.createElement("div");
-                div.className = "problem";
-
-                div.innerHTML = `
-          <h3>${problem.id}. ${problem.title}</h3>
-          <p>${problem.description}</p>
-          <span class="difficulty">${problem.difficulty}</span>
-        `;
-
-                container.appendChild(div);
-            });
+        function escapeHtml(value) {
+            return String(value).replace(/[&<>"']/g, c => ({
+                "&": "&amp;", "<": "&lt;", ">": "&gt;",
+                '"': "&quot;", "'": "&#39;"
+            })[c]);
         }
-    </script>
 
+        async function loadProblems() {
+            const response = await fetch("/problems");
+            problems = await response.json();
+
+            $("problem-list").innerHTML = problems.map(p => `
+                <div class="problem" data-id="${p.id}">
+                    <div class="title">${p.id}. ${escapeHtml(p.title)}</div>
+                    <div class="meta">${escapeHtml(p.difficulty)}</div>
+                </div>
+            `).join("");
+
+            document.querySelectorAll(".problem").forEach(node => {
+                node.onclick = () => select(Number(node.dataset.id));
+            });
+
+            if (problems.length) {
+                select(problems[problems.length - 1].id);
+            }
+        }
+
+        function select(id) {
+            selected = problems.find(p => p.id === id);
+
+            document.querySelectorAll(".problem").forEach(node => {
+                node.classList.toggle(
+                    "active",
+                    Number(node.dataset.id) === id
+                );
+            });
+
+            const samples = (selected.sample_test_cases || []).map((t, i) => `
+                <pre class="sample">sample ${i + 1}
+input:    ${escapeHtml(t.input.trim())}
+expected: ${escapeHtml(t.expected_output.trim())}</pre>
+            `).join("");
+
+            $("detail").innerHTML = `
+                <h3 style="margin:0 0 8px">${selected.id}. ${escapeHtml(selected.title)}</h3>
+                <p class="desc">${escapeHtml(selected.description)}</p>
+                <div class="chips">
+                    <span class="chip">${escapeHtml(selected.difficulty)}</span>
+                    ${(selected.tags || []).map(t => `<span class="chip">${escapeHtml(t)}</span>`).join("")}
+                </div>
+                <ul class="constraints">
+                    ${(selected.constraints || []).map(c => `<li>${escapeHtml(c)}</li>`).join("")}
+                </ul>
+                ${samples}
+                <div class="note">
+                    Hidden tests are not listed here &mdash; the API never sends them.
+                </div>
+            `;
+
+            $("code").value = TEMPLATE;
+            $("submit").disabled = false;
+            $("hint").textContent =
+                "Judged against the samples above, then against hidden tests.";
+
+            resetExecution("Submit a solution to start an execution.");
+        }
+
+        function renderTimeline(status) {
+            const reached = STEPS.indexOf(status);
+
+            $("timeline").innerHTML = STEPS.map((step, i) => {
+                let cls = "step";
+
+                if (reached >= 0 && i < reached) cls += " done";
+                if (reached >= 0 && i === reached) {
+                    cls += status === "FINISHED" ? " done" : " current";
+                }
+
+                return `
+                    ${i ? '<span class="arrow">&rarr;</span>' : ""}
+                    <span class="${cls}"><span class="dot"></span>${step}</span>
+                `;
+            }).join("");
+        }
+
+        function resetExecution(note) {
+            if (poller) {
+                clearInterval(poller);
+                poller = null;
+            }
+
+            renderTimeline(null);
+
+            $("verdict").textContent = "—";
+            $("verdict").className = "verdict NONE";
+            $("time").textContent = "—";
+            $("sid").textContent = "—";
+            $("status-note").textContent = note;
+        }
+
+        async function submit() {
+            if (!selected) return;
+
+            resetExecution("Submitting…");
+            $("submit").disabled = true;
+
+            let submissionId;
+
+            try {
+                const response = await fetch("/submissions", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        problem_id: selected.id,
+                        source_code: $("code").value,
+                        language: "cpp"
+                    })
+                });
+
+                const text = await response.text();
+
+                if (!response.ok) {
+                    $("status-note").textContent =
+                        "Rejected (" + response.status + "): " + text;
+                    $("submit").disabled = false;
+                    return;
+                }
+
+                submissionId = JSON.parse(text).submission_id;
+
+            } catch (error) {
+                $("status-note").textContent = "Request failed: " + error;
+                $("submit").disabled = false;
+                return;
+            }
+
+            $("sid").textContent = submissionId;
+            renderTimeline("QUEUED");
+            $("status-note").textContent = "Polling every 500 ms…";
+
+            const started = Date.now();
+
+            poller = setInterval(async () => {
+                try {
+                    const response =
+                        await fetch("/submissions/" + submissionId);
+
+                    if (!response.ok) return;
+
+                    const data = await response.json();
+
+                    renderTimeline(data.status);
+
+                    if (data.status !== "FINISHED") return;
+
+                    clearInterval(poller);
+                    poller = null;
+
+                    $("verdict").textContent = data.verdict;
+                    $("verdict").className = "verdict " + data.verdict;
+                    $("time").textContent = data.execution_time_ms + " ms";
+
+                    $("status-note").textContent =
+                        "Finished in " +
+                        ((Date.now() - started) / 1000).toFixed(1) +
+                        " s wall clock (" + data.execution_time_ms +
+                        " ms across all test cases).";
+
+                    $("submit").disabled = false;
+
+                } catch (error) {
+                    /* keep polling */
+                }
+            }, 500);
+        }
+
+        $("submit").onclick = submit;
+
+        loadProblems().catch(error => {
+            $("problem-list").textContent = "Failed to load: " + error;
+        });
+    </script>
 </body>
 
 </html>

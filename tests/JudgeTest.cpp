@@ -147,8 +147,18 @@ int main() {
     std::cout << "WA: stopped before running the remaining samples ("
               << fail_fast.execution_time_ms << " ms)\n";
 
-    // Execution time is summed across samples: ~200 ms of sleep
-    // per sample over two samples cannot total under 400 ms.
+    auto problem = problem_repository.getById(PROBLEM_ID);
+
+    assert(problem);
+    assert(!problem->hidden_test_cases.empty());
+
+    const size_t total_tests =
+        problem->sample_test_cases.size() +
+        problem->hidden_test_cases.size();
+
+    // Execution time is summed over every case that ran, samples
+    // and hidden alike: ~200 ms of sleep per case, so a correct
+    // program cannot finish in less than 200 ms * total_tests.
     auto summed = judge(
         "#include <chrono>\n"
         "#include <iostream>\n"
@@ -164,9 +174,42 @@ int main() {
     );
 
     assert(summed.verdict == Verdict::AC);
-    assert(summed.execution_time_ms >= 400);
-    std::cout << "AC: time summed across samples ("
+
+    assert(
+        summed.execution_time_ms >=
+        static_cast<long long>(200 * total_tests)
+    );
+
+    std::cout << "AC: time summed across "
+              << total_tests << " cases ("
               << summed.execution_time_ms << " ms)\n";
+
+    // Hidden tests run after the samples. This program hardcodes
+    // the two published samples and is wrong everywhere else,
+    // so judging samples alone would report AC.
+    auto sample_cheater = judge(
+        "#include <iostream>\n"
+        "int main() {\n"
+        "    int a, b;\n"
+        "    std::cin >> a >> b;\n"
+        "    if (a == 2 && b == 7) {\n"
+        "        std::cout << 9 << std::endl;\n"
+        "    } else if (a == -4 && b == 10) {\n"
+        "        std::cout << 6 << std::endl;\n"
+        "    } else {\n"
+        "        std::cout << 0 << std::endl;\n"
+        "    }\n"
+        "}\n"
+    );
+
+    assert(sample_cheater.verdict == Verdict::WA);
+    std::cout << "WA: passes samples, caught by hidden tests\n";
+
+    std::cout << "Hidden tests loaded: "
+              << problem->hidden_test_cases.size()
+              << " (samples: "
+              << problem->sample_test_cases.size()
+              << ")\n";
 
     std::cout << "Judge test passed\n";
 

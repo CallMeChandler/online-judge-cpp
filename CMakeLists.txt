@@ -46,6 +46,8 @@ add_executable(worker_pool_test
 add_executable(execution_repository_test
     tests/ExecutionRepositoryTest.cpp
     src/repository/ExecutionRepository.cpp
+    src/utils/ExecutionStatus.cpp
+    src/utils/Verdict.cpp
 )
 
 target_include_directories(execution_repository_test PRIVATE
@@ -72,6 +74,8 @@ add_executable(judge_test
     src/utils/Compiler.cpp
     src/utils/ProcessRunner.cpp
     src/utils/SubmissionStatus.cpp
+    src/utils/ExecutionStatus.cpp
+    src/utils/Verdict.cpp
 )
 
 target_include_directories(judge_test PRIVATE

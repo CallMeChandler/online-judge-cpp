@@ -5,12 +5,16 @@
 #include "service/ProblemService.hpp"
 #include "service/SubmissionService.hpp"
 #include "utils/SubmissionStatus.hpp"
+#include "utils/ExecutionStatus.hpp"
+#include "utils/Verdict.hpp"
 #include "queue/BlockingQueue.hpp"
 #include "worker/WorkerPool.hpp"
 #include "models/JudgeJob.hpp"
 #include "repository/ExecutionRepository.hpp"
 #include "judge/Judge.hpp"
 
+// Only sample test cases are serialized. hidden_test_cases is
+// deliberately absent: it must never reach an API response.
 crow::json::wvalue serializeProblem(const Problem& problem) {
     crow::json::wvalue json;
 
@@ -176,7 +180,7 @@ int main() {
     });
 
     CROW_ROUTE(app, "/submissions/<string>")
-    ([&submission_service](const std::string& id) {
+    ([&submission_service, &execution_repository](const std::string& id) {
 
         auto submission =
             submission_service.getSubmissionById(id);
@@ -193,7 +197,32 @@ int main() {
         response["submission_id"] = submission->id;
         response["problem_id"] = submission->problem_id;
         response["language"] = submission->language;
-        response["status"] = submissionStatusToString(submission->status);
+
+        auto executions =
+            execution_repository.getBySubmissionId(
+                submission->id
+            );
+
+        if (executions.empty()) {
+            response["status"] =
+                submissionStatusToString(submission->status);
+
+            response["verdict"] = verdictToString(Verdict::NONE);
+            response["execution_time_ms"] = 0;
+
+            return crow::response(response);
+        }
+
+        const Execution& execution = executions.back();
+
+        response["status"] =
+            executionStatusToString(execution.status);
+
+        response["verdict"] =
+            verdictToString(execution.verdict);
+
+        response["execution_time_ms"] =
+            execution.execution_time_ms;
 
         return crow::response(response);
     });
